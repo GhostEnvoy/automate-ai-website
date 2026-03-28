@@ -3729,6 +3729,62 @@
         // Initialize analytics
         Analytics.init();
 
+        // Error Tracking System
+        const ErrorTracker = {
+            errors: [],
+            
+            init() {
+                // Global error handler
+                window.onerror = (message, source, lineno, colno, error) => {
+                    this.track('uncaught', message, { source, lineno, colno, stack: error?.stack });
+                    return false;
+                };
+                
+                // Promise rejection handler
+                window.onunhandledrejection = (event) => {
+                    this.track('unhandled_rejection', event.reason?.message || String(event.reason), { 
+                        stack: event.reason?.stack 
+                    });
+                };
+            },
+            
+            track(type, message, details = {}) {
+                const error = {
+                    type,
+                    message: String(message),
+                    timestamp: Date.now(),
+                    url: window.location.href,
+                    ...details
+                };
+                this.errors.push(error);
+                
+                // Keep only last 50 errors
+                if (this.errors.length > 50) this.errors.shift();
+                
+                // Save to localStorage
+                localStorage.setItem('site_errors', JSON.stringify(this.errors));
+                
+                // Log for debugging
+                console.error('[ErrorTracker]', error);
+            },
+            
+            getErrors() {
+                return this.errors;
+            },
+            
+            getRecentErrors() {
+                const hourAgo = Date.now() - (60 * 60 * 1000);
+                return this.errors.filter(e => e.timestamp > hourAgo);
+            },
+            
+            clear() {
+                this.errors = [];
+                localStorage.setItem('site_errors', '[]');
+            }
+        };
+        
+        ErrorTracker.init();
+
         // Scroll depth tracking
         window.addEventListener('scroll', () => {
             const scrollTop = window.scrollY;
