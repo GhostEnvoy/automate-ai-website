@@ -1,3 +1,7 @@
 node_modules/
 .env
 *.log
+heartbeat.ps1
+validate.ps1
+validation.json
+.iteration
