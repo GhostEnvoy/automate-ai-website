@@ -21,6 +21,18 @@
             --border: #27272a;
             --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
             --gradient-2: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            --shadow-glow: rgba(99, 102, 241, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow-glow: rgba(99, 102, 241, 0.15);
         }
 
         * {
@@ -35,6 +47,7 @@
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
         /* Animated background */
@@ -68,6 +81,42 @@
             66% { transform: translate(-1%, 1%) rotate(-1deg); }
         }
 
+        /* Floating particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; animation-duration: 12s; }
+        .particle:nth-child(2) { left: 20%; top: 80%; animation-delay: 2s; animation-duration: 18s; }
+        .particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 4s; animation-duration: 14s; }
+        .particle:nth-child(4) { left: 40%; top: 60%; animation-delay: 1s; animation-duration: 16s; }
+        .particle:nth-child(5) { left: 50%; top: 30%; animation-delay: 3s; animation-duration: 20s; }
+        .particle:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; animation-duration: 13s; }
+        .particle:nth-child(7) { left: 70%; top: 50%; animation-delay: 2s; animation-duration: 17s; }
+        .particle:nth-child(8) { left: 80%; top: 25%; animation-delay: 4s; animation-duration: 15s; }
+        .particle:nth-child(9) { left: 90%; top: 85%; animation-delay: 1s; animation-duration: 19s; }
+        .particle:nth-child(10) { left: 15%; top: 55%; animation-delay: 3s; animation-duration: 11s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+            25% { transform: translateY(-30px) scale(1.2); opacity: 0.6; }
+            50% { transform: translateY(-15px) scale(0.8); opacity: 0.3; }
+            75% { transform: translateY(-40px) scale(1.1); opacity: 0.5; }
+        }
+
         /* Grid pattern */
         .grid-pattern {
             position: absolute;
@@ -96,6 +145,11 @@
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             z-index: 100;
+            transition: background 0.5s ease;
+        }
+
+        [data-theme="light"] header {
+            background: rgba(248, 250, 252, 0.9);
         }
 
         .logo {
@@ -118,11 +172,61 @@
             color: var(--text-secondary);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            transition: color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
         }
 
         nav a:hover {
             color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--shadow-glow);
+        }
+
+        .theme-toggle .icon {
+            transition: transform 0.5s ease, opacity 0.3s ease;
+        }
+
+        .theme-toggle .icon-light {
+            position: absolute;
+            opacity: 0;
+            transform: rotate(-90deg);
+        }
+
+        .theme-toggle .icon-dark {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        [data-theme="light"] .theme-toggle .icon-light {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+
+        [data-theme="light"] .theme-toggle .icon-dark {
+            opacity: 0;
+            transform: rotate(90deg);
         }
 
         .status-badge {
@@ -207,6 +311,23 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
@@ -245,25 +366,37 @@
             border: 1px solid var(--border);
             border-radius: 1rem;
             padding: 2rem;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .feature-card:hover {
             border-color: var(--accent-primary);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.2);
         }
 
         .feature-icon {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             background: var(--gradient-1);
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .feature-card h3 {
@@ -287,6 +420,14 @@
             background: var(--bg-secondary);
             border-radius: 1.5rem;
             border: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .stats.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .stat {
@@ -316,6 +457,14 @@
             background: var(--bg-secondary);
             border-radius: 1.5rem;
             border: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s ease;
+        }
+
+        .feedback-section.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .feedback-section h2 {
@@ -338,7 +487,20 @@
 
         .form-group {
             margin-bottom: 1.25rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.4s ease;
         }
+
+        .form-group.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .form-group:nth-child(1).visible { transition-delay: 0.1s; }
+        .form-group:nth-child(2).visible { transition-delay: 0.2s; }
+        .form-group:nth-child(3).visible { transition-delay: 0.3s; }
+        .form-group:nth-child(4).visible { transition-delay: 0.4s; }
 
         .form-group label {
             display: block;
@@ -357,13 +519,14 @@
             color: var(--text-primary);
             font-family: inherit;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
 
         .form-group textarea {
@@ -374,18 +537,34 @@
         .form-rating {
             display: flex;
             gap: 0.5rem;
+            justify-content: center;
         }
 
         .form-rating button {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.25rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-rating button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
         }
 
         .form-rating button:hover,
@@ -393,6 +572,7 @@
             background: var(--accent-primary);
             border-color: var(--accent-primary);
             color: white;
+            transform: scale(1.15);
         }
 
         .submit-btn {
@@ -406,11 +586,128 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        .submit-btn.loading {
+            pointer-events: none;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Success message */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            animation: successPop 0.5s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes successPop {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .success-message .checkmark {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1rem;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .success-message h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+        }
+
+        /* Analytics panel */
+        .analytics-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 50;
+            max-width: 200px;
+        }
+
+        .analytics-panel.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .analytics-panel:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .analytics-panel h4 {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .analytics-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .analytics-stat:last-child {
+            border-bottom: none;
         }
 
         /* Footer */
@@ -420,6 +717,7 @@
             border-top: 1px solid var(--border);
             text-align: center;
             color: var(--text-muted);
+            transition: border-color 0.5s ease;
         }
 
         footer p {
@@ -449,30 +747,40 @@
             .hero h1 {
                 font-size: 2rem;
             }
-        }
 
-        /* Animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 0.6s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .analytics-panel {
+                display: none;
             }
         }
 
-        .feature-card:nth-child(1) { animation-delay: 0.1s; }
-        .feature-card:nth-child(2) { animation-delay: 0.2s; }
-        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        /* Scroll animations base */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
     <div class="bg-animation">
         <div class="grid-pattern"></div>
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
     </div>
 
     <header>
@@ -481,6 +789,10 @@
             <a href="#features">Features</a>
             <a href="#feedback">Feedback</a>
             <a href="https://github.com/GhostEnvoy/automate-ai-website">GitHub</a>
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <span class="icon icon-light">☀️</span>
+                <span class="icon icon-dark">🌙</span>
+            </button>
             <div class="status-badge">
                 <span class="status-dot"></span>
                 AI Active
@@ -489,7 +801,7 @@
     </header>
 
     <main>
-        <section class="hero fade-in">
+        <section class="hero scroll-animate">
             <h1>Self-Improving <span>AI Website</span></h1>
             <p>This website is built and continuously improved by autonomous AI agents. Every interaction helps us learn and evolve to create the best possible user experience.</p>
             <div class="cta-buttons">
@@ -518,17 +830,17 @@
         </section>
 
         <section class="features" id="features">
-            <div class="feature-card fade-in">
+            <div class="feature-card scroll-animate">
                 <div class="feature-icon">🧠</div>
                 <h3>AI-Powered Evolution</h3>
                 <p>Every visit, click, and feedback is analyzed by AI to continuously improve the website's design, functionality, and user experience.</p>
             </div>
-            <div class="feature-card fade-in">
+            <div class="feature-card scroll-animate">
                 <div class="feature-icon">📊</div>
                 <h3>Real-time Analytics</h3>
                 <p>We track user interactions, engagement patterns, and behavioral data to make data-driven improvements automatically.</p>
             </div>
-            <div class="feature-card fade-in">
+            <div class="feature-card scroll-animate">
                 <div class="feature-icon">💬</div>
                 <h3>Feedback-Driven</h3>
                 <p>Your feedback directly influences the AI's decisions. Tell us what to improve and watch it happen in real-time.</p>
@@ -538,6 +850,13 @@
         <section class="feedback-section" id="feedback">
             <h2>Help Us Improve! 🚀</h2>
             <p>Your feedback makes this AI smarter. Share your thoughts and see them implemented.</p>
+            
+            <div class="success-message" id="successMessage">
+                <div class="checkmark">✅</div>
+                <h3>Thank You!</h3>
+                <p>Your feedback has been recorded and will help us improve!</p>
+            </div>
+
             <form class="feedback-form" id="feedbackForm">
                 <div class="form-group">
                     <label for="name">Name (optional)</label>
@@ -550,11 +869,11 @@
                 <div class="form-group">
                     <label>Rate your experience</label>
                     <div class="form-rating">
-                        <button type="button" data-rating="1">😞</button>
-                        <button type="button" data-rating="2">😐</button>
-                        <button type="button" data-rating="3">😊</button>
-                        <button type="button" data-rating="4">🤩</button>
-                        <button type="button" data-rating="5">🔥</button>
+                        <button type="button" data-rating="1" title="Poor">😞</button>
+                        <button type="button" data-rating="2" title="Fair">😐</button>
+                        <button type="button" data-rating="3" title="Good">😊</button>
+                        <button type="button" data-rating="4" title="Great">🤩</button>
+                        <button type="button" data-rating="5" title="Excellent">🔥</button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -572,23 +891,224 @@
         <p id="version">Version 1.0.0</p>
     </footer>
 
+    <div class="analytics-panel" id="analyticsPanel">
+        <h4>📈 Session Stats</h4>
+        <div class="analytics-stat">
+            <span>Page Views</span>
+            <span id="stat-pageviews">0</span>
+        </div>
+        <div class="analytics-stat">
+            <span>Time on Page</span>
+            <span id="stat-time">0s</span>
+        </div>
+        <div class="analytics-stat">
+            <span>Scroll Depth</span>
+            <span id="stat-scroll">0%</span>
+        </div>
+        <div class="analytics-stat">
+            <span>Interactions</span>
+            <span id="stat-clicks">0</span>
+        </div>
+    </div>
+
     <script>
-        // Rating system
+        // Analytics Tracking System
+        const Analytics = {
+            data: {
+                pageViews: 0,
+                sessionStart: Date.now(),
+                scrollDepth: 0,
+                clicks: 0,
+                formInteractions: 0,
+                feedbackSubmitted: false,
+                themeChanges: 0,
+                referrer: document.referrer || 'direct',
+                userAgent: navigator.userAgent
+            },
+
+            init() {
+                const stored = localStorage.getItem('analytics');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    this.data.pageViews = (parsed.pageViews || 0) + 1;
+                    this.data.sessionStart = Date.now();
+                } else {
+                    this.data.pageViews = 1;
+                }
+                this.save();
+                this.trackEvent('page_view');
+            },
+
+            trackEvent(event, details = {}) {
+                const eventData = {
+                    event,
+                    timestamp: Date.now(),
+                    ...details
+                };
+                
+                const events = JSON.parse(localStorage.getItem('analytics_events') || '[]');
+                events.push(eventData);
+                
+                if (events.length > 100) events.shift();
+                localStorage.setItem('analytics_events', JSON.stringify(events));
+            },
+
+            trackScroll(depth) {
+                if (depth > this.data.scrollDepth) {
+                    this.data.scrollDepth = depth;
+                    if (depth > 25) this.trackEvent('scroll_25');
+                    if (depth > 50) this.trackEvent('scroll_50');
+                    if (depth > 75) this.trackEvent('scroll_75');
+                    if (depth > 90) this.trackEvent('scroll_90');
+                }
+            },
+
+            trackClick(element) {
+                this.data.clicks++;
+                this.trackEvent('click', { 
+                    element: element.tagName,
+                    id: element.id || 'none',
+                    class: element.className || 'none'
+                });
+            },
+
+            save() {
+                localStorage.setItem('analytics', JSON.stringify(this.data));
+            },
+
+            getStats() {
+                return this.data;
+            }
+        };
+
+        // Initialize analytics
+        Analytics.init();
+
+        // Scroll depth tracking
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+            Analytics.trackScroll(scrollPercent);
+            document.getElementById('stat-scroll').textContent = scrollPercent + '%';
+        });
+
+        // Click tracking
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                Analytics.trackClick(e.target);
+                document.getElementById('stat-clicks').textContent = Analytics.data.clicks;
+            }
+        });
+
+        // Update time on page
+        setInterval(() => {
+            const elapsed = Math.floor((Date.now() - Analytics.data.sessionStart) / 1000);
+            document.getElementById('stat-time').textContent = elapsed + 's';
+        }, 1000);
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        
+        if (savedTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme === 'light' ? 'light' : '');
+            localStorage.setItem('theme', newTheme);
+            
+            Analytics.data.themeChanges++;
+            Analytics.trackEvent('theme_change', { theme: newTheme });
+            Analytics.save();
+        });
+
+        // Show analytics panel after 3 seconds
+        setTimeout(() => {
+            document.getElementById('analyticsPanel').classList.add('visible');
+            document.getElementById('stat-pageviews').textContent = Analytics.data.pageViews;
+        }, 3000);
+
+        // Scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-animate, .feature-card, .stats, .feedback-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Form groups animation on feedback section visibility
+        const feedbackSection = document.querySelector('.feedback-section');
+        const formObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.form-group').forEach((group, i) => {
+                        setTimeout(() => {
+                            group.classList.add('visible');
+                        }, i * 100);
+                    });
+                }
+            });
+        }, { threshold: 0.3 });
+
+        formObserver.observe(feedbackSection);
+
+        // Rating system with animation
         const ratingButtons = document.querySelectorAll('.form-rating button');
         let selectedRating = 0;
 
         ratingButtons.forEach(button => {
             button.addEventListener('click', () => {
                 selectedRating = parseInt(button.dataset.rating);
-                ratingButtons.forEach(btn => {
-                    btn.classList.toggle('active', parseInt(btn.dataset.rating) <= selectedRating);
+                Analytics.data.formInteractions++;
+                
+                ratingButtons.forEach((btn, index) => {
+                    const rating = parseInt(btn.dataset.rating);
+                    if (rating <= selectedRating) {
+                        btn.classList.add('active');
+                        btn.style.transform = 'scale(1.15)';
+                        setTimeout(() => btn.style.transform = '', 200);
+                    } else {
+                        btn.classList.remove('active');
+                    }
                 });
             });
         });
 
-        // Feedback form
+        // Input focus animations
+        document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => {
+            input.addEventListener('focus', () => {
+                Analytics.data.formInteractions++;
+                input.parentElement.style.transform = 'translateX(5px)';
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.style.transform = '';
+            });
+        });
+
+        // Feedback form submission
         document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = '';
+            
+            await new Promise(resolve => setTimeout(resolve, 1500));
             
             const feedback = {
                 name: document.getElementById('name').value || 'Anonymous',
@@ -596,37 +1116,67 @@
                 rating: selectedRating,
                 feedback: document.getElementById('feedback').value,
                 timestamp: new Date().toISOString(),
-                url: window.location.href
+                url: window.location.href,
+                sessionId: Analytics.data.sessionStart
             };
 
-            // Store locally and simulate API call
             const feedbackList = JSON.parse(localStorage.getItem('feedback') || '[]');
             feedbackList.push(feedback);
             localStorage.setItem('feedback', JSON.stringify(feedbackList));
 
-            // Update counter
             document.getElementById('feedback-count').textContent = feedbackList.length;
 
-            // Visual feedback
-            const submitBtn = document.querySelector('.submit-btn');
-            submitBtn.textContent = 'Thank you! 🎉';
-            submitBtn.style.background = '#22c55e';
-            
-            setTimeout(() => {
-                submitBtn.textContent = 'Submit Feedback';
-                submitBtn.style.background = '';
-                document.getElementById('feedbackForm').reset();
-                ratingButtons.forEach(btn => btn.classList.remove('active'));
-                selectedRating = 0;
-            }, 3000);
+            Analytics.data.feedbackSubmitted = true;
+            Analytics.trackEvent('feedback_submitted', { rating: selectedRating });
+            Analytics.save();
 
-            // Send to analytics (simulated)
-            console.log('Feedback submitted:', feedback);
+            document.getElementById('feedbackForm').style.display = 'none';
+            document.querySelector('.feedback-section p').style.display = 'none';
+            document.querySelector('.feedback-section h2').style.display = 'none';
+            document.getElementById('successMessage').classList.add('show');
+            
+            submitBtn.classList.remove('loading');
         });
 
-        // Simulate some stats
-        document.getElementById('iterations').textContent = Math.floor(Math.random() * 50) + 10;
-        document.getElementById('improvements').textContent = Math.floor(Math.random() * 100) + 20;
+        // Simulate stats (with persistence)
+        const storedFeedback = JSON.parse(localStorage.getItem('feedback') || '[]');
+        document.getElementById('feedback-count').textContent = storedFeedback.length;
+
+        const storedAnalytics = Analytics.getStats();
+        document.getElementById('iterations').textContent = storedAnalytics.pageViews * 5 + 15;
+        document.getElementById('improvements').textContent = storedAnalytics.pageViews * 3 + storedFeedback.length * 2;
+
+        // Number counter animation
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Animate stats when visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statValues = entry.target.querySelectorAll('.stat-value');
+                    statValues.forEach(stat => {
+                        const current = parseInt(stat.textContent) || 0;
+                        const target = parseInt(stat.dataset.target) || current;
+                        animateValue(stat, 0, current, 1500);
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat').forEach(stat => {
+            statObserver.observe(stat);
+        });
     </script>
 </body>
 </html>
