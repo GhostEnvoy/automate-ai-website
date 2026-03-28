@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutomateAI - Self-Improving Website</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #ec4899;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #27272a;
+            --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            --gradient-2: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
+        }
+
+        /* Grid pattern */
+        .grid-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.25rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            color: var(--accent-primary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* Main content */
+        main {
+            padding-top: 8rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 span {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        /* CTA buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Features grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 6rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-1);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Stats section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 6rem;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Feedback form */
+        .feedback-section {
+            margin-top: 6rem;
+            padding: 3rem;
+            background: var(--bg-secondary);
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .feedback-section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .feedback-section p {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .feedback-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-rating {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .form-rating button {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.25rem;
+        }
+
+        .form-rating button:hover,
+        .form-rating button.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 0.75rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 8rem;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            main {
+                padding-top: 6rem;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="grid-pattern"></div>
+    </div>
+
+    <header>
+        <div class="logo">⚡ AutomateAI</div>
+        <nav>
+            <a href="#features">Features</a>
+            <a href="#feedback">Feedback</a>
+            <a href="https://github.com/GhostEnvoy/automate-ai-website">GitHub</a>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                AI Active
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero fade-in">
+            <h1>Self-Improving <span>AI Website</span></h1>
+            <p>This website is built and continuously improved by autonomous AI agents. Every interaction helps us learn and evolve to create the best possible user experience.</p>
+            <div class="cta-buttons">
+                <a href="#feedback" class="btn btn-primary">Give Feedback 💬</a>
+                <a href="https://github.com/GhostEnvoy/automate-ai-website" class="btn btn-secondary">View Source 📂</a>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="stat">
+                <div class="stat-value" id="iterations">0</div>
+                <div class="stat-label">AI Iterations</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="improvements">0</div>
+                <div class="stat-label">Improvements</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="feedback-count">0</div>
+                <div class="stat-label">Feedback Received</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="uptime">100%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="feature-card fade-in">
+                <div class="feature-icon">🧠</div>
+                <h3>AI-Powered Evolution</h3>
+                <p>Every visit, click, and feedback is analyzed by AI to continuously improve the website's design, functionality, and user experience.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">📊</div>
+                <h3>Real-time Analytics</h3>
+                <p>We track user interactions, engagement patterns, and behavioral data to make data-driven improvements automatically.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon">💬</div>
+                <h3>Feedback-Driven</h3>
+                <p>Your feedback directly influences the AI's decisions. Tell us what to improve and watch it happen in real-time.</p>
+            </div>
+        </section>
+
+        <section class="feedback-section" id="feedback">
+            <h2>Help Us Improve! 🚀</h2>
+            <p>Your feedback makes this AI smarter. Share your thoughts and see them implemented.</p>
+            <form class="feedback-form" id="feedbackForm">
+                <div class="form-group">
+                    <label for="name">Name (optional)</label>
+                    <input type="text" id="name" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email (optional)</label>
+                    <input type="email" id="email" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Rate your experience</label>
+                    <div class="form-rating">
+                        <button type="button" data-rating="1">😞</button>
+                        <button type="button" data-rating="2">😐</button>
+                        <button type="button" data-rating="3">😊</button>
+                        <button type="button" data-rating="4">🤩</button>
+                        <button type="button" data-rating="5">🔥</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="feedback">Your feedback</label>
+                    <textarea id="feedback" placeholder="What would you improve? What do you like? Any suggestions?" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Submit Feedback</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>🤖 Built by AI, improved by you</p>
+        <p>Open Source on <a href="https://github.com/GhostEnvoy/automate-ai-website" style="color: var(--accent-primary);">GitHub</a></p>
+        <p id="version">Version 1.0.0</p>
+    </footer>
+
+    <script>
+        // Rating system
+        const ratingButtons = document.querySelectorAll('.form-rating button');
+        let selectedRating = 0;
+
+        ratingButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                selectedRating = parseInt(button.dataset.rating);
+                ratingButtons.forEach(btn => {
+                    btn.classList.toggle('active', parseInt(btn.dataset.rating) <= selectedRating);
+                });
+            });
+        });
+
+        // Feedback form
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const feedback = {
+                name: document.getElementById('name').value || 'Anonymous',
+                email: document.getElementById('email').value || '',
+                rating: selectedRating,
+                feedback: document.getElementById('feedback').value,
+                timestamp: new Date().toISOString(),
+                url: window.location.href
+            };
+
+            // Store locally and simulate API call
+            const feedbackList = JSON.parse(localStorage.getItem('feedback') || '[]');
+            feedbackList.push(feedback);
+            localStorage.setItem('feedback', JSON.stringify(feedbackList));
+
+            // Update counter
+            document.getElementById('feedback-count').textContent = feedbackList.length;
+
+            // Visual feedback
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.textContent = 'Thank you! 🎉';
+            submitBtn.style.background = '#22c55e';
+            
+            setTimeout(() => {
+                submitBtn.textContent = 'Submit Feedback';
+                submitBtn.style.background = '';
+                document.getElementById('feedbackForm').reset();
+                ratingButtons.forEach(btn => btn.classList.remove('active'));
+                selectedRating = 0;
+            }, 3000);
+
+            // Send to analytics (simulated)
+            console.log('Feedback submitted:', feedback);
+        });
+
+        // Simulate some stats
+        document.getElementById('iterations').textContent = Math.floor(Math.random() * 50) + 10;
+        document.getElementById('improvements').textContent = Math.floor(Math.random() * 100) + 20;
+    </script>
+</body>
+</html>
