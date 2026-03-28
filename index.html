@@ -1392,6 +1392,39 @@
             transform: scale(1.1);
         }
 
+        .back-to-top {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            z-index: 50;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--shadow-glow);
+        }
+
         /* Viral features */
         .viral-badge {
             position: fixed;
@@ -3638,6 +3671,10 @@
         🔊
     </button>
 
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()" title="Back to top">
+        ⬆️
+    </button>
+
     <div class="analytics-panel" id="analyticsPanel">
         <h4>📈 Session Stats</h4>
         <div class="analytics-stat">
@@ -4085,6 +4122,20 @@
             }
             progressBar.style.width = scrollPercent + '%';
         });
+
+        // Back to top button visibility
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         // Toast notification system
         function showToast(message, type = 'info') {
