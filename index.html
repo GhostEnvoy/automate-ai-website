@@ -335,11 +335,18 @@
             color: white;
             border: none;
             box-shadow: 0 4px 24px rgba(99, 102, 241, 0.4);
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 4px 24px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.2); }
+            50% { box-shadow: 0 4px 24px rgba(99, 102, 241, 0.6), 0 0 40px rgba(99, 102, 241, 0.4), 0 0 60px rgba(139, 92, 246, 0.2); }
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.6), 0 0 50px rgba(139, 92, 246, 0.4);
+            animation: none;
         }
 
         .btn-secondary {
@@ -351,6 +358,74 @@
         .btn-secondary:hover {
             border-color: var(--accent-primary);
             background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Countdown Timer */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            min-width: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .countdown-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+        }
+
+        .countdown-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 0.5rem;
+        }
+
+        /* Visitor Counter */
+        .visitor-counter {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+        }
+
+        .visitor-counter .eye-icon {
+            font-size: 1rem;
+        }
+
+        .visitor-counter .count {
+            font-weight: 600;
+            color: var(--accent-primary);
         }
 
         /* Features grid */
@@ -804,9 +879,31 @@
         <section class="hero scroll-animate">
             <h1>Self-Improving <span>AI Website</span></h1>
             <p>This website is built and continuously improved by autonomous AI agents. Every interaction helps us learn and evolve to create the best possible user experience.</p>
+            <div class="countdown-container">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-days">00</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-mins">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-secs">00</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
             <div class="cta-buttons">
                 <a href="#feedback" class="btn btn-primary">Give Feedback 💬</a>
                 <a href="https://github.com/GhostEnvoy/automate-ai-website" class="btn btn-secondary">View Source 📂</a>
+            </div>
+            <div class="visitor-counter">
+                <span class="eye-icon">👁️</span>
+                <span><span class="count" id="visitor-count">0</span> visitors</span>
             </div>
         </section>
 
@@ -912,6 +1009,43 @@
     </div>
 
     <script>
+        // Visitor Counter with localStorage persistence
+        const VisitorCounter = {
+            init() {
+                let visitors = parseInt(localStorage.getItem('visitorCount') || '0');
+                visitors++;
+                localStorage.setItem('visitorCount', visitors);
+                document.getElementById('visitor-count').textContent = visitors.toLocaleString();
+            }
+        };
+        VisitorCounter.init();
+
+        // Countdown Timer - set to 7 days from now
+        const CountdownTimer = {
+            targetDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            
+            update() {
+                const now = new Date().getTime();
+                const distance = this.targetDate.getTime() - now;
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown-days').textContent = String(days).padStart(2, '0');
+                document.getElementById('countdown-hours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('countdown-mins').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('countdown-secs').textContent = String(seconds).padStart(2, '0');
+            },
+            
+            start() {
+                this.update();
+                setInterval(() => this.update(), 1000);
+            }
+        };
+        CountdownTimer.start();
+
         // Analytics Tracking System
         const Analytics = {
             data: {
